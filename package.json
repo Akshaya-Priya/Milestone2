@@ -1,0 +1,16 @@
+{
+  "name": "mangalore-transportation-backend",
+  "version": "1.0.0",
+  "description": "Backend API for Mangalore Public Transportation Scheduling App",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.22"
+  }
+}
