@@ -33,6 +33,37 @@ exports.getRealTimeArrivals = (req, res) => {
     res.status(200).json({ arrivals: realTimeArrivals });
 };
 
+
+
+
+
+const bfsShortestPath = (graph, start, end) => {
+    if (start === end) return [start];
+
+    const queue = [[start]];
+    const visited = new Set();
+
+    while (queue.length > 0) {
+        const path = queue.shift();
+        const node = path[path.length - 1];
+
+        if (visited.has(node)) continue;
+        visited.add(node);
+
+        for (const neighbor of graph[node]) {
+            const newPath = [...path, neighbor];
+
+            if (neighbor === end) {
+                return newPath;
+            }
+
+            queue.push(newPath);
+        }
+    }
+
+    return null; // No path found
+};
+
 // Get the optimal route between two stops (Session 6: Graphs)
 exports.getOptimalRoute = (req, res) => {
     const { start, end } = req.query;
@@ -46,10 +77,28 @@ exports.getOptimalRoute = (req, res) => {
         'Stop 7': ['Stop 6']
     };
 
+    if (!start || !end) {
+        return res.status(400).json({
+            message: "Both start and end stops must be provided"
+        });
+    }
     try {
-        const path = findShortestPath(routeGraph, start, end);
-        res.status(200).json({ message: 'Optimal route found', path });
+        const path = bfsShortestPath(routeGraph, start, end);
+
+        if (path) {
+            res.status(200).json({
+                message: "Optimal route found",
+                path
+            });
+        } else {
+            res.status(404).json({
+                message: "No route found between the specified stops"
+            });
+        }
     } catch (error) {
-        res.status(500).json({ message: 'Unable to calculate optimal route', error: error.message });
+        res.status(500).json({
+            message: "Unable to calculate optimal route",
+            error: error.message
+        });
     }
 };
